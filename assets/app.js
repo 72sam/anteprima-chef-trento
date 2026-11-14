@@ -1,17 +1,47 @@
 (() => {
   'use strict';
 
-  // Every interaction is local to this demonstration page.
   const featured = {
-    bufala: {category: 'pizze', special: true, image: 'assets/pizza-hero.jpg'},
-    crudo: {category: 'pizze', special: true, image: 'assets/pizza-detail.jpg'},
-    zuccotto: {category: 'dolci', image: 'assets/tiramisu.jpg'},
-    acqua: {category: 'bevande', emoji: 'H₂O'}
+    bufala: {category: 'pizze', special: true},
+    crudo: {category: 'pizze', special: true},
+    zuccotto: {category: 'dolci'},
+    caffe: {category: 'bevande'}
   };
-  const products = Object.entries(featured).map(([id, card]) => {
-    const item = window.CHEF_MENU.find((dish) => dish.id === id);
-    return {...item, ...card};
-  });
+  const products = new Map(window.CHEF_MENU
+    .filter((item) => Number.isFinite(item.price) && item.price >= 0)
+    .map((item) => [item.id, item]));
+  const featuredProducts = Object.keys(featured)
+    .filter((id) => products.has(id))
+    .map((id) => ({...products.get(id), ...featured[id]}));
+
+  const cartContents = `
+    <div class="dialog-header">
+      <span class="eyebrow dark">CHEF, DA PORTARE CON TE</span>
+      <button class="close-dialog" type="button" data-close-dialog aria-label="Chiudi ordine">×</button>
+    </div>
+    <h2 id="cart-title">Il tuo <em>asporto.</em></h2>
+    <p class="dialog-notice">Scegli un orario di ritiro per provare l’ordine dimostrativo.</p>
+    <div id="cart-empty" class="empty-state">
+      <span aria-hidden="true">✳</span>
+      <h3>Da cosa iniziamo?</h3>
+      <p>Scegli dal menu cosa portare con te.</p>
+      <button type="button" class="button button-dark" data-close-dialog data-browse-menu>Sfoglia il menu</button>
+    </div>
+    <div id="cart-content" hidden>
+      <div id="cart-items"></div>
+      <div class="cart-summary"><span>Totale dimostrativo</span><strong id="cart-total">0,00 €</strong></div>
+      <form id="checkout-form">
+        <label>Orario di ritiro
+          <select id="pickup-time" required>
+            <option value="">Scegli un orario</option>
+            <option>19:00</option><option>19:30</option><option>20:00</option><option>20:30</option>
+          </select>
+        </label>
+        <button class="button button-dark full-width" type="submit">Simula l'ordine <span aria-hidden="true">↗</span></button>
+      </form>
+    </div>
+    <div class="result-box" id="cart-receipt" role="status" hidden></div>
+  `;
 
   const byId = (id) => document.getElementById(id);
   const euro = new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' });
@@ -40,9 +70,9 @@
   }
 
   function visibleProducts() {
-    if (category === 'all') return products;
-    if (category === 'speciali') return products.filter((item) => item.special);
-    return products.filter((item) => item.category === category);
+    if (category === 'all') return featuredProducts;
+    if (category === 'speciali') return featuredProducts.filter((item) => item.special);
+    return featuredProducts.filter((item) => item.category === category);
   }
 
   function renderMenu() {
@@ -52,14 +82,20 @@
       const card = element('article', 'menu-card');
       if (item.image) {
         const img = document.createElement('img');
-        img.src = item.image;
+        img.src = item.cardImage || item.thumbnail || item.image;
+        if (item.cardImage && item.thumbnail) {
+          img.srcset = item.thumbnail + ' ' + item.thumbWidth + 'w, ' + item.cardImage + ' ' + item.cardWidth + 'w';
+          img.sizes = '(max-width: 700px) 50vw, (max-width: 1100px) 46vw, 24vw';
+        }
         img.alt = item.name + ' - fotografia di Pizzeria Chef';
         img.loading = 'lazy';
-        card.append(img);
-      } else {
-        const visual = element('div', 'card-visual', item.emoji || '');
-        visual.setAttribute('aria-hidden', 'true');
-        card.append(visual);
+        const zoom = element('button', 'home-dish-photo');
+        zoom.type = 'button';
+        zoom.dataset.zoomImage = item.image;
+        zoom.dataset.photoName = item.name;
+        zoom.setAttribute('aria-label', `Ingrandisci la foto di ${item.name}`);
+        zoom.append(img);
+        card.append(zoom);
       }
       const body = element('div', 'card-body');
       const top = element('div', 'card-top');
@@ -87,7 +123,9 @@
   }
 
   function total() {
-    return products.reduce((sum, item) => sum + item.price * (basket.get(item.id) || 0), 0);
+    let cents = 0;
+    for (const [id, quantity] of basket) cents += Math.round(products.get(id).price * 100) * quantity;
+    return cents / 100;
   }
 
   function renderCart() {
@@ -115,9 +153,8 @@
     }
 
     const rows = [];
-    for (const item of products) {
-      const itemQuantity = basket.get(item.id) || 0;
-      if (!itemQuantity) continue;
+    for (const [id, itemQuantity] of basket) {
+      const item = products.get(id);
       const row = element('div', 'cart-row');
       const info = element('div', 'cart-item-info');
       info.append(element('strong', '', item.name), element('span', '', `${euro.format(item.price)} × ${itemQuantity}`));
@@ -139,9 +176,14 @@
   }
 
   function changeQuantity(id, delta) {
-    const item = products.find((entry) => entry.id === id);
-    if (!item) return;
-    const next = Math.max(0, Math.min(20, (basket.get(id) || 0) + delta));
+    const item = products.get(id);
+    if (!item || ![-1, 1].includes(delta)) return;
+    const current = basket.get(id) || 0;
+    const next = Math.max(0, Math.min(20, current + delta));
+    if (current === next) {
+      if (next === 20) notify('Puoi aggiungere fino a 20 pezzi per prodotto.');
+      return;
+    }
     if (next === 0) basket.delete(id);
     else basket.set(id, next);
     try { sessionStorage.setItem('chef-basket', JSON.stringify(Object.fromEntries(basket))); } catch {}
@@ -151,7 +193,7 @@
       receipt.hidden = true;
     }
     renderCart();
-    if (delta > 0) notify(`${item.name} aggiunta al carrello dimostrativo`);
+    if (delta > 0) notify(`Nel carrello: ${item.name} × ${next}`);
   }
 
   function openDialog(id) {
@@ -200,15 +242,33 @@
     notify('Demo azzerata');
   }
 
+  function readBasket() {
+    let saved;
+    try {
+      saved = JSON.parse(sessionStorage.getItem('chef-basket') || '{}');
+    } catch { return; }
+    basket.clear();
+    for (const [id, quantity] of Object.entries(saved || {})) {
+      if (products.has(id) && Number.isInteger(quantity) && quantity > 0 && quantity <= 20) {
+        basket.set(id, quantity);
+      }
+    }
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     const date = byId('booking-date');
     if (date) { date.min = localToday(); date.value=localToday(); }
-    try {
-      const saved = JSON.parse(sessionStorage.getItem('chef-basket') || '{}');
-      for (const {id} of products) {
-        if (Number.isInteger(saved?.[id]) && saved[id] > 0 && saved[id] <= 20) basket.set(id, saved[id]);
+    const cartDialog = byId('cart-dialog');
+    if (cartDialog) cartDialog.innerHTML = cartContents;
+    readBasket();
+    window.addEventListener('pageshow', (event) => {
+      if (event.persisted) {
+        readBasket();
+        renderCart();
+        const receipt = byId('cart-receipt');
+        if (receipt) receipt.hidden = true;
       }
-    } catch {}
+    });
     renderMenu();
     renderCart();
 
@@ -234,14 +294,27 @@
       const add = target.closest('[data-add]');
       if (add) return changeQuantity(add.dataset.add, 1);
       const qty = target.closest('[data-quantity]');
-      if (qty) return changeQuantity(qty.dataset.quantity, Number(qty.dataset.delta) || 0);
+      if (qty) {
+        const {quantity: id, delta} = qty.dataset;
+        changeQuantity(id, Number(delta));
+        const controls = byId('cart-items').querySelectorAll('[data-quantity]:not(:disabled)');
+        const next = Array.from(controls).find((button) => button.dataset.quantity === id && button.dataset.delta === delta)
+          || Array.from(controls).find((button) => button.dataset.quantity === id)
+          || controls[0] || byId('cart-empty').querySelector('button');
+        next.focus({preventScroll: true});
+        return;
+      }
       if (target.closest('#cart-open, [data-open-cart]')) return openDialog('cart-dialog');
       if (target.closest('[data-open-booking]')) return openDialog('booking-dialog');
       const close = target.closest('[data-close-dialog]');
       if (close) {
         const dialog = close.closest('dialog');
         if (dialog) dialog.close();
-        if (close.hasAttribute('data-browse-menu')) document.getElementById('menu')?.scrollIntoView();
+        if (close.hasAttribute('data-browse-menu')) {
+          const catalogue = byId('sfoglia');
+          if (catalogue) catalogue.focus();
+          else location.assign('menu.html');
+        }
         return;
       }
       if (target.closest('#reset-demo')) return resetDemo();

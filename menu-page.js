@@ -14,14 +14,6 @@
     return;
   }
 
-  const pricedDishes = dishes.filter(dish => Number.isFinite(dish.price));
-  const deliveryPrices = pricedDishes.filter(dish => dish.priceSource === 'Deliveroo');
-  const defaultPriceSource = deliveryPrices.length > pricedDishes.length / 2 ? 'Deliveroo' : null;
-  if (defaultPriceSource) {
-    document.getElementById('price-note').textContent =
-      'I prezzi di anteprima sono quelli di Deliveroo, salvo dove indicato. Per il listino in sala e la disponibilità dei piatti, chiedi a Chef.';
-  }
-
   function forSearch(text) {
     return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('it-IT').trim();
   }
@@ -43,16 +35,39 @@
 
   function dishRow(dish) {
     const row = document.createElement('li');
+    if (dish.image) {
+      const photo = document.createElement('button');
+      photo.type = 'button';
+      photo.className = 'dish-photo';
+      photo.dataset.zoomImage = dish.image;
+      photo.dataset.photoName = dish.name;
+      photo.setAttribute('aria-label', 'Ingrandisci la foto di ' + dish.name);
+      const img = document.createElement('img');
+      img.alt = '';
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      img.addEventListener('error', () => {
+        row.classList.remove('dish-with-photo');
+        photo.remove();
+      }, {once: true});
+      img.src = dish.thumbnail || dish.image;
+      photo.append(img);
+      row.className = 'dish-with-photo';
+      row.append(photo);
+    }
     const copy = document.createElement('div');
     copy.append(create('h3', 'dish-name', dish.name));
     if (dish.description) copy.append(create('p', 'ingredients', dish.description));
     row.append(copy);
     if (Number.isFinite(dish.price)) {
-      const amount = create('div', 'amount', currency.format(dish.price));
-      if (dish.priceSource && dish.priceSource !== defaultPriceSource) {
-        amount.append(create('small', 'source', dish.priceSource));
-      }
-      row.append(amount);
+      const actions = document.createElement('div');
+      actions.className = 'dish-actions';
+      const add = create('button', 'dish-add', 'Aggiungi');
+      add.type = 'button';
+      add.dataset.add = dish.id;
+      add.setAttribute('aria-label', 'Aggiungi ' + dish.name + ' al carrello');
+      actions.append(create('span', 'amount', currency.format(dish.price)), add);
+      row.append(actions);
     }
     return row;
   }
@@ -74,7 +89,10 @@
       const list = document.createElement('ul');
       list.className = 'dish-list';
       for (const dish of matches) list.append(dishRow(dish));
-      section.append(heading, list);
+      section.append(heading);
+      const note = window.CHEF_MENU_NOTES?.[label];
+      if (note) section.append(create('p', 'group-note', note));
+      section.append(list);
       content.append(section);
       count += matches.length;
     }

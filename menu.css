@@ -61,15 +61,22 @@ h1 em { font-weight: 400; }
 .result-count { margin: 20px 0 8px; color: var(--muted); font-size: .85rem; }
 .menu-group { padding: 24px 0 12px; }
 .group-title { margin: 0 0 16px; font-size: clamp(2.15rem, 4vw, 3.25rem); line-height: 1.12; overflow-wrap: anywhere; }
+.group-note { max-width: 74ch; margin: -4px 0 18px; color: var(--muted); font-size: .9rem; line-height: 1.5; }
 .dish-list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: clamp(32px, 6vw, 84px); }
 .dish-list li {
-  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline;
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center;
   column-gap: 14px; padding-block: 17px; border-top: 1px solid var(--line);
 }
+.dish-list .dish-with-photo { grid-template-columns: clamp(78px, 7vw, 100px) minmax(0, 1fr) auto; }
+.dish-photo { width: 100%; aspect-ratio: 1; border-radius: 12px; }
+.dish-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .dish-name { margin: 0; font-size: 1.05rem; line-height: 1.45; overflow-wrap: anywhere; }
 .ingredients { color: var(--muted); margin: 4px 0 0; max-width: 55ch; font-size: .9rem; line-height: 1.6; overflow-wrap: anywhere; }
+.dish-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
 .amount { font-variant-numeric: tabular-nums; text-align: right; font-size: 1rem; font-weight: 600; }
-.source { display: block; font-size: .73rem; line-height: 1.5; color: var(--muted); font-weight: 400; margin-top: 3px; max-width: 14ch; overflow-wrap: anywhere; }
+.dish-add { min-height: 44px; padding: 7px 13px; border: 1px solid var(--ink); border-radius: 8px; color: var(--ink); background: transparent; font: 600 .84rem/1.2 Arial, sans-serif; cursor: pointer; }
+.dish-add:active, .dish-add:focus-visible { background: var(--ink); color: var(--paper); }
+@media (hover: hover) { .dish-add:hover { background: var(--ink); color: var(--paper); } }
 .reset { margin-top: 10px; min-height: 46px; padding: 10px 16px; border-radius: 8px; border: 1px solid var(--ink); color: var(--ink); background: var(--paper); font: 600 .875rem Arial, sans-serif; cursor: pointer; }
 .reset:hover { background: var(--ink); color: var(--paper); }
 footer { background: var(--ink); color: var(--paper); }
@@ -77,16 +84,19 @@ footer { background: var(--ink); color: var(--paper); }
 .footer-inner nav { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 18px; }
 .footer-inner a { white-space: nowrap; }
 
+@media (max-width: 920px) {
+  .dish-list { grid-template-columns: 1fr; }
+}
 @media (max-width: 740px) {
   .wrap { width: calc(100% - 40px); }
   .header-inner { min-height: 70px; }
   .menu-intro { column-gap: 20px; }
-  .dish-list { grid-template-columns: 1fr; }
   .dish-list li { padding-block: 14px; }
 }
 @media (max-width: 580px) {
   .menu-intro { display: block; padding-block: 28px 24px; }
-  .cover-photo { margin-top: 20px; height: clamp(112px, 28vw, 155px); border-radius: 11px; }
+  .menu-cover-zoom { margin-top: 20px; }
+  .cover-photo { height: clamp(112px, 28vw, 155px); border-radius: 11px; }
   h1 { font-size: clamp(3.45rem, 14vw, 5.6rem); margin-block: 10px; }
   .price-note { font-size: .9rem; }
   .brand img { width: 70px; height: 47px; }
@@ -97,6 +107,11 @@ footer { background: var(--ink); color: var(--paper); }
   .menu-group { padding-block: 15px 12px; }
   .group-title { margin-bottom: 12px; }
   .footer-inner { display: block; font-size: .75rem; }
+}
+@media (max-width: 480px) {
+  .dish-list .dish-with-photo { grid-template-columns: 72px minmax(0, 1fr); row-gap: 5px; }
+  .dish-with-photo .dish-photo { align-self: start; grid-row: 1 / span 2; }
+  .dish-with-photo .dish-actions { flex-direction: row; align-items: center; justify-content: space-between; flex-wrap: wrap; }
 }
 @media (prefers-reduced-motion: no-preference) {
   .cover-photo { animation: appear .4s ease-out; }
