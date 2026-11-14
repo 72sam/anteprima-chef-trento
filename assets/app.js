@@ -2,12 +2,16 @@
   'use strict';
 
   // Every interaction is local to this demonstration page.
-  const products = [
-    { id: 'bufala', name: 'Pizza Bufala', price: 13, category: 'pizze', special: true, description: 'Pomodoro, mozzarella di bufala e basilico. Ricetta e prezzo da confermare.', tagline: 'Fotografia del locale · prezzo di prova', image: 'assets/pizza-hero.jpg' },
-    { id: 'crudo', name: 'Crudo e Bufala', price: 15, category: 'pizze', special: true, description: 'Una delle proposte fotografate di Chef. Ingredienti e allergeni da validare con la gestione.', tagline: 'Fotografia del locale · prezzo di prova', image: 'assets/pizza-detail.jpg' },
-    { id: 'zuccotto', name: 'Zuccotto al pistacchio', price: 6, category: 'dolci', special: false, description: 'Un finale dolce, dalla selezione fotografica del locale. Listino da confermare.', tagline: 'Fotografia del locale · prezzo di prova', image: 'assets/tiramisu.jpg' },
-    { id: 'acqua', name: 'Acqua', price: 2, category: 'bevande', special: false, description: 'Voce di esempio per provare il carrello.', tagline: 'Voce e prezzo dimostrativi', emoji: 'H₂O' }
-  ];
+  const featured = {
+    bufala: {category: 'pizze', special: true, image: 'assets/pizza-hero.jpg'},
+    crudo: {category: 'pizze', special: true, image: 'assets/pizza-detail.jpg'},
+    zuccotto: {category: 'dolci', image: 'assets/tiramisu.jpg'},
+    acqua: {category: 'bevande', emoji: 'H₂O'}
+  };
+  const products = Object.entries(featured).map(([id, card]) => {
+    const item = window.CHEF_MENU.find((dish) => dish.id === id);
+    return {...item, ...card};
+  });
 
   const byId = (id) => document.getElementById(id);
   const euro = new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' });
@@ -60,7 +64,8 @@
       const body = element('div', 'card-body');
       const top = element('div', 'card-top');
       top.append(element('h3', '', item.name), element('span', 'price', euro.format(item.price)));
-      body.append(top, element('p', 'description', item.description), element('p', 'tagline', item.tagline));
+      body.append(top);
+      if (item.description) body.append(element('p', 'description', item.description));
       const add = element('button', 'add-button', 'Aggiungi');
       add.type = 'button';
       add.dataset.add = item.id;
@@ -139,6 +144,7 @@
     const next = Math.max(0, Math.min(20, (basket.get(id) || 0) + delta));
     if (next === 0) basket.delete(id);
     else basket.set(id, next);
+    try { sessionStorage.setItem('chef-basket', JSON.stringify(Object.fromEntries(basket))); } catch {}
     const receipt = byId('cart-receipt');
     if (receipt) {
       receipt.replaceChildren();
@@ -172,6 +178,7 @@
 
   function resetDemo() {
     basket.clear();
+    try { sessionStorage.removeItem('chef-basket'); } catch {}
     try { sessionStorage.removeItem('chef-booking-demo'); sessionStorage.removeItem('chef-order-demo'); sessionStorage.removeItem('chef-dashboard-demo'); } catch {}
     renderCart();
     const checkout = byId('checkout-form');
@@ -196,8 +203,23 @@
   document.addEventListener('DOMContentLoaded', () => {
     const date = byId('booking-date');
     if (date) { date.min = localToday(); date.value=localToday(); }
+    try {
+      const saved = JSON.parse(sessionStorage.getItem('chef-basket') || '{}');
+      for (const {id} of products) {
+        if (Number.isInteger(saved?.[id]) && saved[id] > 0 && saved[id] <= 20) basket.set(id, saved[id]);
+      }
+    } catch {}
     renderMenu();
     renderCart();
+
+    function openBookingFromMenu() {
+      if (location.hash === '#prenota') {
+        openDialog('booking-dialog');
+        history.replaceState(null, '', location.pathname + location.search);
+      }
+    }
+    openBookingFromMenu();
+    window.addEventListener('hashchange', openBookingFromMenu);
 
     document.addEventListener('click', (event) => {
       const target = event.target instanceof Element ? event.target : null;

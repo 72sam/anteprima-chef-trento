@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#1d2925">
+  <meta name="description" content="Sfoglia il menu di Pizzeria Chef a Trento e cerca pizze e piatti per nome o categoria.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; script-src 'self'; style-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <title>Il menu · Pizzeria Chef, Trento</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="menu.css">
+  <script src="assets/menu-data.js" defer></script>
+  <script src="menu-page.js" defer></script>
+</head>
+<body id="inizio">
+  <a class="skip" href="#sfoglia">Vai ai piatti</a>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="index.html" aria-label="Pizzeria Chef, pagina iniziale">
+        <img src="assets/chef-logo-clean.jpg" alt="" width="120" height="68">
+      </a>
+      <nav aria-label="Navigazione principale">
+        <a href="index.html"><span aria-hidden="true">←</span> Torna al sito</a>
+        <a class="book-table" href="index.html#prenota">Prenota un tavolo <span aria-hidden="true">↗</span></a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <section class="wrap menu-intro" aria-labelledby="titolo">
+      <div>
+        <p class="location">Pizzeria Chef · Trento</p>
+        <h1 id="titolo">Il <em>menu.</em></h1>
+        <p class="price-note" id="price-note">In anteprima i prezzi provengono dai menu pubblicati dal locale. Il listino in sala può variare.</p>
+      </div>
+      <img class="cover-photo" src="assets/chef-pizza-margherita.jpg" width="500" height="500" alt="Preparazione di una pizza nella cucina di Chef">
+    </section>
+    <div class="wrap catalogue" id="sfoglia" tabindex="-1">
+      <div class="filters" role="search" aria-label="Filtra il menu" hidden>
+        <label for="category">Categoria
+          <select id="category" aria-controls="piatti"><option value="">Tutte le categorie</option></select>
+        </label>
+        <label for="query">Cerca nel menu
+          <input id="query" type="search" placeholder="Nome o ingrediente" autocomplete="off" aria-controls="piatti">
+        </label>
+      </div>
+      <p class="result-count" id="risultati" role="status" aria-live="polite" aria-atomic="true"></p>
+      <div id="piatti"></div>
+      <button type="button" class="reset" id="reset" hidden>Mostra tutto il menu</button>
+      <noscript><p>Attiva JavaScript per sfogliare le categorie del menu.</p></noscript>
+    </div>
+  </main>
+  <footer>
+    <div class="wrap footer-inner"><span>Pizzeria Chef · Largo Giosuè Carducci, 31 · Trento</span><nav aria-label="Collegamenti del menu"><a href="index.html#menu">Prova l’asporto <span aria-hidden="true">↗</span></a><a href="#inizio">Torna su <span aria-hidden="true">↑</span></a></nav></div>
+  </footer>
+</body>
+</html>

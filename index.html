@@ -17,30 +17,30 @@
   <meta name="robots" content="noindex,nofollow">
   <meta name="theme-color" content="#1d2925"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'none'; form-action 'none'; frame-src 'none'; object-src 'none'; base-uri 'self'">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="assets/style.css"><script src="assets/app.js" defer></script><script src="assets/motion.js" defer></script>
+  <link rel="stylesheet" href="assets/style.css"><script src="assets/menu-data.js" defer></script><script src="assets/app.js" defer></script><script src="assets/motion.js" defer></script>
 </head>
 <body>
-  <a class="skip-link" href="#menu">Vai al menu</a>
+  <a class="skip-link" href="#contenuto">Vai al contenuto</a>
   <div class="intro-flourish" aria-hidden="true"><span>CHEF</span><i>made with love</i><b></b></div>
 
   <header class="site-header">
     <a class="brand" href="#inizio" aria-label="Chef, torna all'inizio"><img src="assets/chef-logo-clean.jpg" alt="CHEF Pizzeria — Made with love" width="160" height="110"></a>
-    <nav class="desktop-nav" aria-label="Navigazione principale"><a href="#menu">Il menu</a><a href="#esperienza">L'esperienza</a><a href="#dove">Dove siamo</a></nav>
+    <nav class="desktop-nav" aria-label="Navigazione principale"><a href="menu.html">Il menu</a><a href="#esperienza">L'esperienza</a><a href="#dove">Dove siamo</a></nav>
     <div class="header-actions"><a class="compare-proposals" href="gestione.html">Confronta le due proposte <span aria-hidden="true">↗</span></a><button class="cart-trigger" id="cart-open" type="button" aria-label="Apri ordine da asporto">Asporto <span id="cart-count">0</span></button><button class="button button-light header-book" data-open-booking type="button">Prenota un tavolo <span>↗</span></button><button class="mobile-toggle" id="mobile-menu-toggle" aria-label="Apri menu di navigazione" aria-expanded="false" aria-controls="mobile-nav" type="button">☰</button></div>
   </header>
-  <nav class="mobile-nav hidden" id="mobile-nav" aria-label="Navigazione mobile"><a href="#menu">Il menu</a><a href="#esperienza">L'esperienza</a><a href="#dove">Dove siamo</a><button data-open-booking type="button">Prenota un tavolo ↗</button></nav>
-  <main>
+  <nav class="mobile-nav hidden" id="mobile-nav" aria-label="Navigazione mobile"><a href="menu.html">Il menu</a><a href="#esperienza">L'esperienza</a><a href="#dove">Dove siamo</a><button data-open-booking type="button">Prenota un tavolo ↗</button></nav>
+  <main id="contenuto">
     <section class="hero section-shell" id="inizio">
-      <div class="hero-copy"><div class="eyebrow"><span></span> PIZZERIA CHEF · TRENTO</div><h1>La tua pizza.<br><em>Il tuo posto<br>in centro.</em></h1><p class="hero-description">Una pizza, le persone giuste, una serata da ricordare.<br>Ci trovi in Largo Carducci, 31.</p><div class="hero-actions"><a class="button button-gold" href="#menu">Esplora il menu <span>↓</span></a><button class="text-button" type="button" data-open-booking>Prenota un tavolo <span>↗</span></button></div><div class="hero-footnote"><span class="tiny-line"></span> IN SALA, O DA PORTARE CON TE.</div></div>
+      <div class="hero-copy"><div class="eyebrow"><span></span> PIZZERIA CHEF · TRENTO</div><h1>La tua pizza.<br><em>Il tuo posto<br>in centro.</em></h1><p class="hero-description">Una pizza, le persone giuste, una serata da ricordare.<br>Ci trovi in Largo Carducci, 31.</p><div class="hero-actions"><a class="button button-gold" href="menu.html">Esplora il menu <span aria-hidden="true">↗</span></a><button class="text-button" type="button" data-open-booking>Prenota un tavolo <span>↗</span></button></div><div class="hero-footnote"><span class="tiny-line"></span> IN SALA, O DA PORTARE CON TE.</div></div>
       <div class="hero-visual"><img class="hero-photo" src="assets/pizza-hero.jpg" alt="Pizza Bufala fotografata per Pizzeria Chef" fetchpriority="high" width="1000" height="1200"><div class="hero-photo-shade"></div><div class="photo-caption"><span>CHEF</span><small>MADE WITH LOVE.</small></div><div class="round-note">PIZZERIA<br>CHEF<span>Made with love.</span></div></div>
     </section>
     <section class="reputation section-shell"><div><strong>9,3<span>/10</span></strong><p>La valutazione di Chef su TheFork<small>Riscontro pubblico del 13 novembre 2026</small></p></div><p>Una reputazione che nasce<br><em>da chi si è già seduto qui.</em></p><a href="https://www.thefork.it/ristorante/pizzeria-chef-r726519" target="_blank" rel="noopener noreferrer">Leggi le recensioni ↗</a></section>
     <div class="ticker" aria-hidden="true"><div>BUONA PIZZA <b>✳</b> BUONA COMPAGNIA <b>✳</b> NEL CUORE DI TRENTO <b>✳</b> MADE WITH LOVE <b>✳</b> BUONA PIZZA <b>✳</b></div></div>
     <section class="menu-section" id="menu"><div class="section-shell">
-      <div class="section-heading"><div><span class="eyebrow dark">A OGNUNO LA SUA</span><h2>Ti va una <em>pizza?</em></h2></div><p>Fotografie vere, un menu tutto da esplorare.<br>Questa anteprima contiene una selezione dimostrativa.</p></div>
-      <div class="menu-toolbar"><div class="category-tabs" id="category-tabs" role="group" aria-label="Categorie del menu"><button type="button" data-category="all" class="active" aria-pressed="true">Tutta la selezione</button><button type="button" data-category="pizze" aria-pressed="false">Pizze</button><button type="button" data-category="speciali" aria-pressed="false">Speciali</button><button type="button" data-category="dolci" aria-pressed="false">Dolci</button><button type="button" data-category="bevande" aria-pressed="false">Da bere</button></div><span class="menu-demo-note">Anteprima · selezione e prezzi dimostrativi</span></div>
+      <div class="section-heading"><div><span class="eyebrow dark">A OGNUNO LA SUA</span><h2>Ti va una <em>pizza?</em></h2></div><p>Qualche assaggio dalla cucina di Chef.<br>Scopri tutti i piatti nella pagina del menu.</p></div>
+      <div class="menu-toolbar"><div class="category-tabs" id="category-tabs" role="group" aria-label="Categorie del menu"><button type="button" data-category="all" class="active" aria-pressed="true">Tutta la selezione</button><button type="button" data-category="pizze" aria-pressed="false">Pizze</button><button type="button" data-category="speciali" aria-pressed="false">Speciali</button><button type="button" data-category="dolci" aria-pressed="false">Dolci</button><button type="button" data-category="bevande" aria-pressed="false">Da bere</button></div><span class="menu-demo-note">Una selezione per provare l’asporto</span></div>
       <div class="menu-grid" id="menu-grid" aria-live="polite"></div>
-      <div class="menu-bottom-note"><span>Sul telefono e dal QR al tavolo. Il menu completo sarà inserito con il listino approvato da Chef.</span><button type="button" class="text-button dark-text" data-open-cart>Prova l'ordine da asporto <span>↗</span></button></div>
+      <div class="menu-bottom-note"><a class="button button-dark" href="menu.html">Vedi il menu completo <span aria-hidden="true">↗</span></a><button type="button" class="text-button dark-text" data-open-cart>Prova l'ordine da asporto <span>↗</span></button></div>
     </div></section>
     <section class="experience section-shell" id="esperienza">
       <div class="experience-photo">
