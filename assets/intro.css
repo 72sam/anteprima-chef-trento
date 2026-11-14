@@ -1,0 +1,71 @@
+.chef-intro {
+  display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html.chef-intro-active .chef-intro {
+    position: fixed;
+    inset: 0;
+    z-index: 120;
+    display: grid;
+    place-items: center;
+    isolation: isolate;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 50% 45%, #304039, #202e29 55%, #19241f);
+    clip-path: inset(0);
+    transition: clip-path 480ms cubic-bezier(.72, 0, .28, 1);
+  }
+
+  .chef-intro-plate {
+    position: relative;
+    width: clamp(202px, 50vmin, 328px);
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    border: 1px solid #ae977e45;
+    border-radius: 50%;
+    transition: transform 440ms ease-in, opacity 320ms ease-in;
+  }
+
+  .chef-intro-plate::before, .chef-intro-plate::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .chef-intro-plate::before {
+    inset: 7px;
+    border: 1px solid #ae977e35;
+  }
+
+  .chef-intro-plate::after {
+    inset: -1px;
+    border: 1px solid transparent;
+    border-top-color: #e0bb8e;
+    border-right-color: #be9272;
+    animation: chef-plate-turn 1.65s cubic-bezier(.32, .62, .35, 1) both;
+  }
+
+  .chef-intro-plate img {
+    display: block;
+    width: 64%;
+    height: auto;
+    mix-blend-mode: screen;
+    animation: chef-mark-in 520ms cubic-bezier(.16, 1, .3, 1) both;
+  }
+
+  html.chef-intro-leaving .chef-intro { clip-path: inset(0 0 100%); }
+  .chef-intro-leaving .chef-intro-plate { transform: translateY(-18px); opacity: 0; }
+
+  @keyframes chef-plate-turn {
+    from { opacity: 0; transform: rotate(-145deg); }
+    20% { opacity: 1; }
+    to { opacity: 1; transform: rotate(155deg); }
+  }
+
+  @keyframes chef-mark-in {
+    from { opacity: 0; transform: translateY(5px) scale(.96); }
+    to { opacity: 1; transform: none; }
+  }
+}
