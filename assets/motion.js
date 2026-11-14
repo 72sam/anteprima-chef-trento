@@ -1,7 +1,7 @@
 (() => {
   'use strict';
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-  const nodes = [...document.querySelectorAll('.section-heading, .reputation, .experience, .booking-strip, .location, .owner-preview, .path-card, .benefit-row, .video-section')];
+  const nodes = [...document.querySelectorAll('.section-heading, .reputation, .experience, .location, .owner-preview, .path-card, .benefit-row, .video-section')];
   let observer;
   function enable() {
     if (reduced.matches || !('IntersectionObserver' in window)) {
