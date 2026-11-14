@@ -40,3 +40,20 @@
   .site-header { padding-inline: 10px; }
   .brand, .brand img { width: 72px; }
 }
+
+@media (pointer: coarse) {
+  dialog select, dialog input { font-size: 16px; min-width: 0; }
+  .form-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .close-dialog, .qty-control button, .mobile-toggle { min-width: 44px; min-height: 44px; }
+  .category-tabs button, .add-button { min-height: 44px; }
+  .qty-control { gap: 6px; }
+}
+@media (max-width: 700px) {
+  .round-note { display: none; }
+  .mobile-cart-bar { bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
+  .site-footer { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)); }
+  #toast { bottom: calc(80px + env(safe-area-inset-bottom, 0px)); pointer-events: none; }
+}
+@media (max-width: 375px) {
+  .form-row { grid-template-columns: minmax(0, 1fr); }
+}

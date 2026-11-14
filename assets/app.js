@@ -88,6 +88,8 @@
   function renderCart() {
     const quantity = count();
     const formattedTotal = euro.format(total());
+    const mobileCart = document.querySelector('.mobile-cart-bar');
+    if (mobileCart) mobileCart.hidden = quantity === 0;
     for (const id of ['cart-count', 'cart-count-mobile']) {
       const node = byId(id);
       if (node) node.textContent = String(quantity);
@@ -148,7 +150,16 @@
 
   function openDialog(id) {
     const dialog = byId(id);
-    if (dialog && !dialog.open) dialog.showModal();
+    if (dialog && !dialog.open) {
+      const nav = byId('mobile-nav');
+      const toggle = byId('mobile-menu-toggle');
+      if (nav && toggle && !nav.classList.contains('hidden')) {
+        nav.classList.add('hidden');
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-label', 'Apri menu di navigazione');
+      }
+      dialog.showModal();
+    }
   }
 
   function localToday() {
@@ -208,6 +219,7 @@
       if (close) {
         const dialog = close.closest('dialog');
         if (dialog) dialog.close();
+        if (close.hasAttribute('data-browse-menu')) document.getElementById('menu')?.scrollIntoView();
         return;
       }
       if (target.closest('#reset-demo')) return resetDemo();
@@ -216,7 +228,9 @@
         const nav = byId('mobile-nav');
         if (nav) {
           nav.classList.toggle('hidden');
-          toggle.setAttribute('aria-expanded', String(!nav.classList.contains('hidden')));
+          const expanded = !nav.classList.contains('hidden');
+          toggle.setAttribute('aria-expanded', String(expanded));
+          toggle.setAttribute('aria-label', expanded ? 'Chiudi menu di navigazione' : 'Apri menu di navigazione');
         }
         return;
       }
@@ -224,7 +238,10 @@
         const nav = byId('mobile-nav');
         const button = byId('mobile-menu-toggle');
         if (nav) nav.classList.add('hidden');
-        if (button) button.setAttribute('aria-expanded', 'false');
+        if (button) {
+          button.setAttribute('aria-expanded', 'false');
+          button.setAttribute('aria-label', 'Apri menu di navigazione');
+        }
       }
     });
 

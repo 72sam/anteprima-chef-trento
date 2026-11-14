@@ -27,3 +27,9 @@
   .proposal-choices { grid-template-columns: 1fr; gap: 8px; }
   .proposal-choices a { padding: 10px 14px; }
 }
+
+@media (orientation: landscape) and (max-height: 480px) {
+  .proposal-intro { padding-block: 22px; }
+  .proposal-intro h1 { font-size: 40px; margin-bottom: 18px; }
+  .proposal-choices { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
